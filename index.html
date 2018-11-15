@@ -2,15 +2,27 @@
 
 
 
+
+
+
+
+
+
+
+
+
   
 
 
-<html class="theme-next pisces use-motion" lang="zh-Hans">
+<html class="theme-next pisces use-motion" lang="zh-CN">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
 <meta name="theme-color" content="#222">
+
+
+
 
 
 
@@ -38,10 +50,6 @@
 
 
 
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
 
 
 
@@ -50,44 +58,25 @@
 
 <link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
 
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
 
 
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
 
 
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
 
 
-  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="Hexo, NexT" />
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="张超的个人博客" type="application/atom+xml" />
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
 
 
 
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="张超的个人博客">
-<meta property="og:url" content="http://www.zhangzichuan.cn/index.html">
-<meta property="og:site_name" content="张超的个人博客">
-<meta property="og:locale" content="zh-Hans">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="张超的个人博客">
 
 
 
@@ -96,15 +85,13 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    version: '5.1.4',
+    version: '6.5.0',
     sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
     tabs: true,
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
     algolia: {
       applicationID: '',
       apiKey: '',
@@ -116,12 +103,35 @@
 </script>
 
 
+  
+
+
+
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="张超的个人博客">
+<meta property="og:url" content="http://www.zhangzichuan.cn/index.html">
+<meta property="og:site_name" content="张超的个人博客">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="张超的个人博客">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="张超的个人博客" type="application/atom+xml" />
+
+
+
 
   <link rel="canonical" href="http://www.zhangzichuan.cn/"/>
 
 
 
-
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
 
   <title>张超的个人博客</title>
   
@@ -133,9 +143,39 @@
 
 
 
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
 
   
   
@@ -152,19 +192,17 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">张超的个人博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-      
-        <p class="site-subtitle"></p>
-      
+    
   </div>
 
   <div class="site-nav-toggle">
-    <button>
+    <button aria-label="切换导航栏">
       <span class="btn-bar"></span>
       <span class="btn-bar"></span>
       <span class="btn-bar"></span>
@@ -172,45 +210,69 @@
   </div>
 </div>
 
-<nav class="site-nav">
-  
 
+
+<nav class="site-nav">
   
     <ul id="menu" class="menu">
       
         
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
         
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
         
-        <li class="menu-item menu-item-archives">
-          <a href="/archives/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
+          
+          <li class="menu-item menu-item-home menu-item-active">
+
+    
+    
+    
       
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+
+  </li>
 
       
+      
     </ul>
+  
+
   
 
   
@@ -218,12 +280,23 @@
 
 
 
- </div>
+  
+
+
+
+</div>
     </header>
+
+    
+
 
     <main id="main" class="main">
       <div class="main-inner">
         <div class="content-wrap">
+          
+            
+
+          
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
@@ -234,6 +307,8 @@
 
   
   
+  
+
   
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
@@ -260,11 +335,20 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/05/31/0-5/" itemprop="url">NSDate，NSCalendar的农历支持</a></h1>
+                
+                <a href="/2018/05/31/0-5/" class="post-title-link" itemprop="http://www.zhangzichuan.cn/index.html">NSDate，NSCalendar的农历支持</a>
+              
+            
+          </h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+
+            
+            
+            
+
             
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -272,13 +356,18 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-31T17:00:00+08:00">
-                2018-05-31
-              </time>
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-31 17:00:00 / 修改时间：17:17:47" itemprop="dateCreated datePublished" datetime="2018-05-31T17:00:00+08:00">2018-05-31</time>
             
 
             
+              
 
+              
             
           </span>
 
@@ -296,7 +385,7 @@
                  <i class="fa fa-eye"></i>
                </span>
                
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
+                 <span class="post-meta-item-text">阅读次数：</span>
                
                  <span class="leancloud-visitors-count"></span>
              </span>
@@ -325,21 +414,29 @@
           <p>五年前我们团队制作第一版<code>倒数日</code>时，并不支持农历，那个时候iOS系统也没有农历的相关接口。14年制作第二版倒数日（iDays）的时候，为了实现农历和公历的双向转换，使用sql数据库存储了前后100年内每日的农历信息，数据容量8Mb左右，增加了软件大小，且限制了年限为 1900年-2100年间。</p>
 <p>直到iOS 8.0，iOS系统框架开始才开始支持中国农历的相关计算，我们将系统的相关类进行扩充，以满足我们新产品对农历的需求。</p>
           <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/31/0-5/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/05/31/0-5/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
           <!--/noindex-->
         
       
     </div>
+
+    
+
     
     
     
 
     
 
+    
+       
+    
     
 
     
@@ -372,6 +469,8 @@
   
   
 
+  
+
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
   
   
@@ -396,11 +495,20 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/10/0-4/" itemprop="url">GCD对象封装GCDQuene指南</a></h1>
+                
+                <a href="/2018/01/10/0-4/" class="post-title-link" itemprop="http://www.zhangzichuan.cn/index.html">GCD对象封装GCDQuene指南</a>
+              
+            
+          </h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+
+            
+            
+            
+
             
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -408,13 +516,18 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-10T12:00:00+08:00">
-                2018-01-10
-              </time>
+
+              
+                
+              
+
+              <time title="创建时间：2018-01-10 12:00:00 / 修改时间：15:05:05" itemprop="dateCreated datePublished" datetime="2018-01-10T12:00:00+08:00">2018-01-10</time>
             
 
             
+              
 
+              
             
           </span>
 
@@ -432,7 +545,7 @@
                  <i class="fa fa-eye"></i>
                </span>
                
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
+                 <span class="post-meta-item-text">阅读次数：</span>
                
                  <span class="leancloud-visitors-count"></span>
              </span>
@@ -461,21 +574,29 @@
           <h2 id="源码地址"><a href="#源码地址" class="headerlink" title="源码地址"></a>源码地址</h2><p><a href="https://github.com/zsy78191/custom-ui/blob/master/custom-ui/Classes/Foundition/GCDQuene.h" target="_blank" rel="noopener">源代码Github</a></p>
 <p><a href="https://github.com/zsy78191/custom-ui" target="_blank" rel="noopener">custom-ui repo</a></p>
           <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/10/0-4/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/01/10/0-4/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
           <!--/noindex-->
         
       
     </div>
+
+    
+
     
     
     
 
     
 
+    
+       
+    
     
 
     
@@ -508,6 +629,8 @@
   
   
 
+  
+
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
   
   
@@ -532,11 +655,20 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/13/0-3/" itemprop="url">三、是消息？还是属性？</a></h1>
+                
+                <a href="/2017/12/13/0-3/" class="post-title-link" itemprop="http://www.zhangzichuan.cn/index.html">三、是消息？还是属性？</a>
+              
+            
+          </h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+
+            
+            
+            
+
             
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -544,13 +676,30 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-13T16:00:00+08:00">
-                2017-12-13
-              </time>
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-13 16:00:00" itemprop="dateCreated datePublished" datetime="2017-12-13T16:00:00+08:00">2017-12-13</time>
             
 
             
+              
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2017-12-14 11:12:49" itemprop="dateModified" datetime="2017-12-14T11:12:49+08:00">2017-12-14</time>
+              
             
           </span>
 
@@ -568,7 +717,7 @@
                  <i class="fa fa-eye"></i>
                </span>
                
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
+                 <span class="post-meta-item-text">阅读次数：</span>
                
                  <span class="leancloud-visitors-count"></span>
              </span>
@@ -596,21 +745,29 @@
         
           <p>经过三篇文章的铺垫，这里我们终于要讨论到核心部分，就是关于ObjC的消息机制，但不涉及任何关于runtime的内容。</p>
           <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/13/0-3/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2017/12/13/0-3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
           <!--/noindex-->
         
       
     </div>
+
+    
+
     
     
     
 
     
 
+    
+       
+    
     
 
     
@@ -641,6 +798,8 @@
 
   
   
+  
+
   
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
@@ -667,11 +826,20 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/09/0-2/" itemprop="url">二、interface和setter，getter</a></h1>
+                
+                <a href="/2017/12/09/0-2/" class="post-title-link" itemprop="http://www.zhangzichuan.cn/index.html">二、interface和setter，getter</a>
+              
+            
+          </h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+
+            
+            
+            
+
             
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -679,13 +847,30 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T16:00:00+08:00">
-                2017-12-09
-              </time>
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-09 16:00:00" itemprop="dateCreated datePublished" datetime="2017-12-09T16:00:00+08:00">2017-12-09</time>
             
 
             
+              
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2017-12-14 11:12:34" itemprop="dateModified" datetime="2017-12-14T11:12:34+08:00">2017-12-14</time>
+              
             
           </span>
 
@@ -703,7 +888,7 @@
                  <i class="fa fa-eye"></i>
                </span>
                
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
+                 <span class="post-meta-item-text">阅读次数：</span>
                
                  <span class="leancloud-visitors-count"></span>
              </span>
@@ -729,24 +914,32 @@
 
       
         
-          <p><a href="http://blog.orzer.club/2017/12/07/0-1/">前篇</a>说到我们通过ObjC的Category特性给日常工作增加便捷的实现，这一篇则要从语言设计角度，跟大家分享一些思考。</p>
+          <p><a href="http://blog.orzer.club/2017/12/07/0-1/" target="_blank" rel="noopener">前篇</a>说到我们通过ObjC的Category特性给日常工作增加便捷的实现，这一篇则要从语言设计角度，跟大家分享一些思考。</p>
 <h2 id="不要忽视interface"><a href="#不要忽视interface" class="headerlink" title="不要忽视interface"></a>不要忽视interface</h2><p>ObjC的@interface设计，跟Java和C#真的很像，但又略有不同，相比之下Java和C#则像是一个模子刻出来的。ObjC的特点十分明显，首先是一般不用写<code>@private</code>和<code>@public</code>来区分私有变量，大部分ObjC开发者甚至都不知道还有这两个关键字，其实Cocoa源代码中也基本没有使用过这种设计，即使ObjC是支持的。</p>
           <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/09/0-2/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2017/12/09/0-2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
           <!--/noindex-->
         
       
     </div>
+
+    
+
     
     
     
 
     
 
+    
+       
+    
     
 
     
@@ -779,6 +972,8 @@
   
   
 
+  
+
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
   
   
@@ -803,11 +998,20 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/07/0-1/" itemprop="url">一、认识ObjC，改造Cocoa</a></h1>
+                
+                <a href="/2017/12/07/0-1/" class="post-title-link" itemprop="http://www.zhangzichuan.cn/index.html">一、认识ObjC，改造Cocoa</a>
+              
+            
+          </h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+
+            
+            
+            
+
             
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -815,13 +1019,30 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-07T16:00:00+08:00">
-                2017-12-07
-              </time>
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-07 16:00:00" itemprop="dateCreated datePublished" datetime="2017-12-07T16:00:00+08:00">2017-12-07</time>
             
 
             
+              
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2017-12-09 16:25:18" itemprop="dateModified" datetime="2017-12-09T16:25:18+08:00">2017-12-09</time>
+              
             
           </span>
 
@@ -839,7 +1060,7 @@
                  <i class="fa fa-eye"></i>
                </span>
                
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
+                 <span class="post-meta-item-text">阅读次数：</span>
                
                  <span class="leancloud-visitors-count"></span>
              </span>
@@ -868,21 +1089,29 @@
           <p>接上篇，其实在接触Ruby不久后，我就萌生了改造ObjC的Cocoa框架的想法。为什么要改造？只为能够提高开发OC项目的效率。同时我也完成了一些改造工作，详见<a href="http://www.jianshu.com/p/7362021d3554" target="_blank" rel="noopener">像Ruby一样写ObjC，用block实现链式方法调用</a></p>
 <p>说到改造这个问题，我想起曾经有人说，合格的程序员都会不断追求自动化，不断追求代码的解耦与复用，不断追求拓展技术的边界。我们也往往会从这三个方向找切入口，例如OC和Python一样充斥了一些C语言函数形式的方法或者宏，例如<code>NSLog()</code>、<code>NSLocalizedString()</code>，或是CoreGraphic框架中一系列的C函数，更有甚者GCD（Grand Central Dispatch）完全是C函数代码，但GCD因为把多线程编程做的跟if/else一样好用，所以用多了也都接受了。</p>
           <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/07/0-1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2017/12/07/0-1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
           <!--/noindex-->
         
       
     </div>
+
+    
+
     
     
     
 
     
 
+    
+       
+    
     
 
     
@@ -915,6 +1144,8 @@
   
   
 
+  
+
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
   
   
@@ -939,11 +1170,20 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/06/0-0/" itemprop="url">说在前面的</a></h1>
+                
+                <a href="/2017/12/06/0-0/" class="post-title-link" itemprop="http://www.zhangzichuan.cn/index.html">说在前面的</a>
+              
+            
+          </h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+
+            
+            
+            
+
             
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -951,13 +1191,30 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-06T15:00:00+08:00">
-                2017-12-06
-              </time>
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-06 15:00:00" itemprop="dateCreated datePublished" datetime="2017-12-06T15:00:00+08:00">2017-12-06</time>
             
 
             
+              
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2017-12-09 16:25:17" itemprop="dateModified" datetime="2017-12-09T16:25:17+08:00">2017-12-09</time>
+              
             
           </span>
 
@@ -975,7 +1232,7 @@
                  <i class="fa fa-eye"></i>
                </span>
                
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
+                 <span class="post-meta-item-text">阅读次数：</span>
                
                  <span class="leancloud-visitors-count"></span>
              </span>
@@ -1003,21 +1260,29 @@
         
           <h2 id="从面相对象说起"><a href="#从面相对象说起" class="headerlink" title="从面相对象说起"></a>从面相对象说起</h2><p><code>面向对象的程序设计</code>（Object-Oriented Programming，简记为OOP）这个概念大家都有所耳闻，目前（2017.12）,在<a href="https://www.tiobe.com/tiobe-index/" target="_blank" rel="noopener">Tiobe</a>世界语言排行榜上排前十的语言中，C语言和Assembly language(汇编)外的八种语言均原生支持<code>面向对象的程序设计</code>。</p>
           <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/06/0-0/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2017/12/06/0-0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
           <!--/noindex-->
         
       
     </div>
+
+    
+
     
     
     
 
     
 
+    
+       
+    
     
 
     
@@ -1048,9 +1313,6 @@
 
 
           </div>
-          
-
-
           
 
         </div>
@@ -1085,24 +1347,24 @@
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
-          <nav class="site-state motion-element">
-
-            
-              <div class="site-state-item site-state-posts">
+          
+            <nav class="site-state motion-element">
               
-                <a href="/archives/">
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
               
-                  <span class="site-state-item-count">6</span>
-                  <span class="site-state-item-name">日志</span>
-                </a>
-              </div>
-            
 
-            
+              
 
-            
-
-          </nav>
+              
+            </nav>
+          
 
           
             <div class="feed-link motion-element">
@@ -1115,28 +1377,40 @@
 
           
             <div class="links-of-author motion-element">
-                
-                  <span class="links-of-author-item">
-                    <a href="https://github.com/zsy78191" target="_blank" title="GitHub">
-                      
-                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
-                  </span>
-                
-                  <span class="links-of-author-item">
-                    <a href="https://weibo.com/2008320863/profile?topnav=1&wvr=6" target="_blank" title="Weibo">
-                      
-                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
-                  </span>
-                
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zsy78191" title="GitHub &rarr; https://github.com/zsy78191" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/2008320863/profile?topnav=1&wvr=6" title="Weibo &rarr; https://weibo.com/2008320863/profile?topnav=1&wvr=6" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>Weibo</a>
+                </span>
+              
             </div>
           
 
           
-          
 
           
           
 
+          
+            
+          
           
 
         </div>
@@ -1157,29 +1431,26 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
-  <span class="with-love">
+  <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">秋刀鱼片</span>
 
   
+
+  
 </div>
 
 
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
 
 
 
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
 
 
 
 
         
+
 
 
 
@@ -1199,7 +1470,10 @@
     
 
     
+	
+    
 
+    
   </div>
 
   
@@ -1218,7 +1492,11 @@
 
 
 
-  
+
+
+
+
+
 
 
 
@@ -1238,16 +1516,6 @@
 
   
   
-    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-  
-
-  
-  
     <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
   
 
@@ -1256,18 +1524,13 @@
     <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
   
 
-  
-  
-    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-  
-
 
   
 
 
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
 
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
 
 
 
@@ -1275,9 +1538,9 @@
   
 
 
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
 
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
 
 
 
@@ -1286,21 +1549,7 @@
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  
-
-
-
-
-	
-
-
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
 
 
 
@@ -1308,11 +1557,7 @@
 
 
 
-
-
   
-
-
 
 
 
@@ -1332,11 +1577,9 @@
   
 
   
-  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
-  <script>AV.initialize("j51XonMEHXS2yNdh5yRcufkk-gzGzoHsz", "2tv2P0xhBcGfmlfXy4wMTjOy");</script>
   <script>
+    
     function showTime(Counter) {
-      var query = new AV.Query(Counter);
       var entries = [];
       var $visitors = $(".leancloud_visitors");
 
@@ -1344,9 +1587,8 @@
         entries.push( $(this).attr("id").trim() );
       });
 
-      query.containedIn('url', entries);
-      query.find()
-        .done(function (results) {
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url: { "$in": entries } }) })
+        .done(function ({ results }) {
           var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
 
           if (results.length === 0) {
@@ -1356,8 +1598,8 @@
 
           for (var i = 0; i < results.length; i++) {
             var item = results[i];
-            var url = item.get('url');
-            var time = item.get('time');
+            var url = item.url;
+            var time = item.time;
             var element = document.getElementById(url);
 
             $(element).find(COUNT_CONTAINER_REF).text(time);
@@ -1371,68 +1613,33 @@
             }
           }
         })
-        .fail(function (object, error) {
-          console.log("Error: " + error.code + " " + error.message);
+        .fail(function ({ responseJSON }) {
+          console.log("LeanCloud Counter Error: " + responseJSON.code + " " + responseJSON.error);
         });
     }
-
-    function addCount(Counter) {
-      var $visitors = $(".leancloud_visitors");
-      var url = $visitors.attr('id').trim();
-      var title = $visitors.attr('data-flag-title').trim();
-      var query = new AV.Query(Counter);
-
-      query.equalTo("url", url);
-      query.find({
-        success: function(results) {
-          if (results.length > 0) {
-            var counter = results[0];
-            counter.fetchWhenSave(true);
-            counter.increment("time");
-            counter.save(null, {
-              success: function(counter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(counter.get('time'));
-              },
-              error: function(counter, error) {
-                console.log('Failed to save Visitor num, with error message: ' + error.message);
-              }
-            });
-          } else {
-            var newcounter = new Counter();
-            /* Set ACL */
-            var acl = new AV.ACL();
-            acl.setPublicReadAccess(true);
-            acl.setPublicWriteAccess(true);
-            newcounter.setACL(acl);
-            /* End Set ACL */
-            newcounter.set("title", title);
-            newcounter.set("url", url);
-            newcounter.set("time", 1);
-            newcounter.save(null, {
-              success: function(newcounter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
-              },
-              error: function(newcounter, error) {
-                console.log('Failed to create');
-              }
-            });
-          }
-        },
-        error: function(error) {
-          console.log('Error:' + error.code + " " + error.message);
-        }
-      });
-    }
+    
 
     $(function() {
-      var Counter = AV.Object.extend("Counter");
-      if ($('.leancloud_visitors').length == 1) {
-        addCount(Counter);
-      } else if ($('.post-title-link').length > 1) {
-        showTime(Counter);
-      }
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + "j51XonMEHXS2yNdh5yRcufkk-gzGzoHsz")
+        .done(function ({ api_server }) {
+          var Counter = function (method, url, data) {
+            return $.ajax({
+              method: method,
+              url: `https://${api_server}/1.1${url}`,
+              headers: {
+                'X-LC-Id': "j51XonMEHXS2yNdh5yRcufkk-gzGzoHsz",
+                'X-LC-Key': "2tv2P0xhBcGfmlfXy4wMTjOy",
+                'Content-Type': 'application/json',
+              },
+              data: data,
+            });
+          };
+          
+          if ($('.post-title-link').length >= 1) {
+            showTime(Counter);
+          }
+          
+        })
     });
   </script>
 
@@ -1443,6 +1650,16 @@
   
 
   
+
+  
+
+  
+  
+
+  
+
+  
+
   
 
   
