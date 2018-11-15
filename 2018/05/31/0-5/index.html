@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="张超的个人博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="五年前我们团队制作第一版倒数日时，并不支持农历，那个时候iOS系统也没有农历的相关接口。14年制作第二版倒数日（iDays）的时候，为了实现农历和公历的双向转换，使用sql数据库存储了前后100年内每日的农历信息，数据容量8Mb左右，增加了软件大小，且限制了年限为 1900年-2100年间。 直到iOS 8.0，iOS系统框架开始才开始支持中国农历的相关计算，我们将系统的相关类进行扩充，以满足我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSDate，NSCalendar的农历支持">
+<meta property="og:url" content="http://www.zhangzichuan.cn/2018/05/31/0-5/index.html">
+<meta property="og:site_name" content="张超的个人博客">
+<meta property="og:description" content="五年前我们团队制作第一版倒数日时，并不支持农历，那个时候iOS系统也没有农历的相关接口。14年制作第二版倒数日（iDays）的时候，为了实现农历和公历的双向转换，使用sql数据库存储了前后100年内每日的农历信息，数据容量8Mb左右，增加了软件大小，且限制了年限为 1900年-2100年间。 直到iOS 8.0，iOS系统框架开始才开始支持中国农历的相关计算，我们将系统的相关类进行扩充，以满足我们">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-31T09:17:47.181Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NSDate，NSCalendar的农历支持">
+<meta name="twitter:description" content="五年前我们团队制作第一版倒数日时，并不支持农历，那个时候iOS系统也没有农历的相关接口。14年制作第二版倒数日（iDays）的时候，为了实现农历和公历的双向转换，使用sql数据库存储了前后100年内每日的农历信息，数据容量8Mb左右，增加了软件大小，且限制了年限为 1900年-2100年间。 直到iOS 8.0，iOS系统框架开始才开始支持中国农历的相关计算，我们将系统的相关类进行扩充，以满足我们">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.zhangzichuan.cn/2018/05/31/0-5/"/>
+
+
+
+
+
+  <title>NSDate，NSCalendar的农历支持 | 张超的个人博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">张超的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zhangzichuan.cn/2018/05/31/0-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="秋刀鱼片">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://ww2.sinaimg.cn/mw690/77b48b5fjw8etkxjpachmj205k05kmx2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="张超的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NSDate，NSCalendar的农历支持</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-31T17:00:00+08:00">
+                2018-05-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/31/0-5/" class="leancloud_visitors" data-flag-title="NSDate，NSCalendar的农历支持">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>五年前我们团队制作第一版<code>倒数日</code>时，并不支持农历，那个时候iOS系统也没有农历的相关接口。14年制作第二版倒数日（iDays）的时候，为了实现农历和公历的双向转换，使用sql数据库存储了前后100年内每日的农历信息，数据容量8Mb左右，增加了软件大小，且限制了年限为 1900年-2100年间。</p>
+<p>直到iOS 8.0，iOS系统框架开始才开始支持中国农历的相关计算，我们将系统的相关类进行扩充，以满足我们新产品对农历的需求。</p>
+<a id="more"></a>
+<h2 id="Cocospods"><a href="#Cocospods" class="headerlink" title="Cocospods"></a>Cocospods</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod <span class="string">'gerinn-dev-kit'</span></div></pre></td></tr></table></figure>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a href="https://github.com/zsy78191/gerinn-dev-kit" target="_blank" rel="noopener">Github</a></p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><h3 id="NSDate-Lunar"><a href="#NSDate-Lunar" class="headerlink" title="NSDate+Lunar"></a>NSDate+Lunar</h3><p>NSDate+Lunar 部分包含了<code>NSDate</code>和<code>NSCalendar</code>两个部分的扩充。</p>
+<h4 id="NSDate"><a href="#NSDate" class="headerlink" title="NSDate"></a>NSDate</h4><p>获取当前日期是否为农历闰月。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">BOOL</span>)lunar_isLeapMonth;</div></pre></td></tr></table></figure>
+<p>获取农历月份，和中文描述。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSInteger</span>)lunar_month;</div><div class="line">- (<span class="built_in">NSInteger</span>)lunar_month_chinese;</div></pre></td></tr></table></figure>
+<p>获取农历年份的干支描述，农历以公元前2697年为第一个甲子年，60年一个周期，lunar_year的值为1-60。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSInteger</span>)lunar_year;</div><div class="line">- (<span class="built_in">NSString</span>*)lunar_year_chinese;</div></pre></td></tr></table></figure>
+<p>获取农历日期，以及中文描述。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSInteger</span>)lunar_day;</div><div class="line">- (<span class="built_in">NSString</span>*)lunar_day_chinese;</div></pre></td></tr></table></figure>
+<h4 id="NSCalendar"><a href="#NSCalendar" class="headerlink" title="NSCalendar"></a>NSCalendar</h4><p>所有<code>NSCalendar</code>关于农历的分类方法，要求NSCalendar使用<code>NSCalendarIdentifierChinese</code>初始化，所以提供一个实例方法:</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">+ (<span class="keyword">instancetype</span>)lunarCalendar;</div></pre></td></tr></table></figure>
+<p>在做农历日期选择器的时候，因为农历年和公历年数量上是一一对应的，所以接口中的年份参数均设计成公历年，省去了中间的换算过程，月份和日期则为农历月，农历日。</p>
+<h5 id="通过公历年获取农历年干支"><a href="#通过公历年获取农历年干支" class="headerlink" title="通过公历年获取农历年干支"></a>通过公历年获取农历年干支</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSString</span>*)lunar_yearChineseWithGregorianYear:(<span class="built_in">NSInteger</span>)year;</div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[[<span class="built_in">NSCalendar</span> lunarCalendar] lunar_yearChineseWithGregorianYear:<span class="number">2018</span>]);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>戊戌</p>
+</blockquote>
+<h5 id="通过公历年获取月份数组"><a href="#通过公历年获取月份数组" class="headerlink" title="通过公历年获取月份数组"></a>通过公历年获取月份数组</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSArray</span> &lt;<span class="built_in">NSNumber</span>*&gt;*)lunar_monthWithGregorianYear:(<span class="built_in">NSInteger</span>)year;</div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[[<span class="built_in">NSCalendar</span> lunarCalendar] lunar_monthWithGregorianYear:<span class="number">2017</span>]);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>(<br>   1,<br>   2,<br>   3,<br>   4,<br>   5,<br>   6,<br>   7,<br>   8,<br>   9,<br>   10,<br>   11,<br>   12,<br>   13<br>)</p>
+</blockquote>
+<h5 id="获取农历月份描述"><a href="#获取农历月份描述" class="headerlink" title="获取农历月份描述"></a>获取农历月份描述</h5><p>因为2017年有闰月，所以月份返回了13个。通过月份序号，调用下面的方法获取中文名称：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSString</span> *)lunar_monthChineseWithLunarMonth:(<span class="built_in">NSInteger</span>)month gregorianYear:(<span class="built_in">NSInteger</span>)year;</div></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[[<span class="built_in">NSCalendar</span> lunarCalendar] lunar_monthChineseWithLunarMonth:<span class="number">7</span> gregorianYear:<span class="number">2017</span>]);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>闰六月</p>
+</blockquote>
+<h5 id="获取天数数组"><a href="#获取天数数组" class="headerlink" title="获取天数数组"></a>获取天数数组</h5><p>接着我们根据公历年和农历月获取天数数组</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[[<span class="built_in">NSCalendar</span> lunarCalendar] lunar_daysWithGregorianYear:<span class="number">2017</span> lunarMonth:<span class="number">6</span>]);</div></pre></td></tr></table></figure>
+<p>同样可以获取到天数的中文描述</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSString</span>*)lunar_dayChineseWithLunarDay:(<span class="built_in">NSInteger</span>)day shortDes:(<span class="built_in">BOOL</span>)useShort;</div></pre></td></tr></table></figure>
+<p>当useShort为真时，会将<code>二十四</code>中的<code>二十</code>缩写成<code>廿</code>。</p>
+<h5 id="通过农历年月日获取公历NSDate"><a href="#通过农历年月日获取公历NSDate" class="headerlink" title="通过农历年月日获取公历NSDate"></a>通过农历年月日获取公历NSDate</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSDate</span>*)lunar_getDayWithGregorianYear:(<span class="built_in">NSInteger</span>)year lunarMonth:(<span class="built_in">NSInteger</span>)month lunarDay:(<span class="built_in">NSInteger</span>)day;</div></pre></td></tr></table></figure>
+<p>这里的year为公历年，month为前面接口返回的序号。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[[<span class="built_in">NSCalendar</span> lunarCalendar] lunar_getDayWithGregorianYear:<span class="number">1989</span> lunarMonth:<span class="number">8</span> lunarDay:<span class="number">8</span>]);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Thu Sep  7 00:00:00 1989</p>
+</blockquote>
+<h3 id="NSDate-Calculation"><a href="#NSDate-Calculation" class="headerlink" title="NSDate+Calculation"></a>NSDate+Calculation</h3><p>天数计算目前有三个接口，区分公历和农历</p>
+<h5 id="一周后"><a href="#一周后" class="headerlink" title="一周后"></a>一周后</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[[<span class="built_in">NSDate</span> date] calculate:<span class="built_in">NSCalendarUnitWeekOfYear</span> value:<span class="number">1</span>];</div></pre></td></tr></table></figure>
+<h5 id="一个月后"><a href="#一个月后" class="headerlink" title="一个月后"></a>一个月后</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[[<span class="built_in">NSDate</span> date] lunar_calculate:<span class="built_in">NSCalendarUnitMonth</span> value:<span class="number">1</span>];</div></pre></td></tr></table></figure>
+<h4 id="公历计算两个日期间的差值"><a href="#公历计算两个日期间的差值" class="headerlink" title="公历计算两个日期间的差值"></a>公历计算两个日期间的差值</h4><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,@([[f dateFromString:<span class="string">@"2018-05-31"</span>] calculateFromDate:[f dateFromString:<span class="string">@"2018-11-12"</span>] unit:<span class="built_in">NSCalendarUnitWeekday</span>]));</div></pre></td></tr></table></figure>
+<blockquote>
+<p>-165</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/10/0-4/" rel="next" title="GCD对象封装GCDQuene指南">
+                <i class="fa fa-chevron-left"></i> GCD对象封装GCDQuene指南
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="http://ww2.sinaimg.cn/mw690/77b48b5fjw8etkxjpachmj205k05kmx2.jpg"
+                alt="秋刀鱼片" />
+            
+              <p class="site-author-name" itemprop="name">秋刀鱼片</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zsy78191" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/2008320863/profile?topnav=1&wvr=6" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Cocospods"><span class="nav-number">1.</span> <span class="nav-text"><a href="#Cocospods" class="headerlink" title="Cocospods"></a>Cocospods</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Github"><span class="nav-number">2.</span> <span class="nav-text"><a href="#Github" class="headerlink" title="Github"></a>Github</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用方法"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x4F7F;&#x7528;&#x65B9;&#x6CD5;" class="headerlink" title="&#x4F7F;&#x7528;&#x65B9;&#x6CD5;"></a>&#x4F7F;&#x7528;&#x65B9;&#x6CD5;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NSDate-Lunar"><span class="nav-number">3.1.</span> <span class="nav-text"><a href="#NSDate-Lunar" class="headerlink" title="NSDate+Lunar"></a>NSDate+Lunar</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NSDate"><span class="nav-number">3.1.1.</span> <span class="nav-text"><a href="#NSDate" class="headerlink" title="NSDate"></a>NSDate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NSCalendar"><span class="nav-number">3.1.2.</span> <span class="nav-text"><a href="#NSCalendar" class="headerlink" title="NSCalendar"></a>NSCalendar</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#通过公历年获取农历年干支"><span class="nav-number">3.1.2.1.</span> <span class="nav-text"><a href="#&#x901A;&#x8FC7;&#x516C;&#x5386;&#x5E74;&#x83B7;&#x53D6;&#x519C;&#x5386;&#x5E74;&#x5E72;&#x652F;" class="headerlink" title="&#x901A;&#x8FC7;&#x516C;&#x5386;&#x5E74;&#x83B7;&#x53D6;&#x519C;&#x5386;&#x5E74;&#x5E72;&#x652F;"></a>&#x901A;&#x8FC7;&#x516C;&#x5386;&#x5E74;&#x83B7;&#x53D6;&#x519C;&#x5386;&#x5E74;&#x5E72;&#x652F;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通过公历年获取月份数组"><span class="nav-number">3.1.2.2.</span> <span class="nav-text"><a href="#&#x901A;&#x8FC7;&#x516C;&#x5386;&#x5E74;&#x83B7;&#x53D6;&#x6708;&#x4EFD;&#x6570;&#x7EC4;" class="headerlink" title="&#x901A;&#x8FC7;&#x516C;&#x5386;&#x5E74;&#x83B7;&#x53D6;&#x6708;&#x4EFD;&#x6570;&#x7EC4;"></a>&#x901A;&#x8FC7;&#x516C;&#x5386;&#x5E74;&#x83B7;&#x53D6;&#x6708;&#x4EFD;&#x6570;&#x7EC4;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取农历月份描述"><span class="nav-number">3.1.2.3.</span> <span class="nav-text"><a href="#&#x83B7;&#x53D6;&#x519C;&#x5386;&#x6708;&#x4EFD;&#x63CF;&#x8FF0;" class="headerlink" title="&#x83B7;&#x53D6;&#x519C;&#x5386;&#x6708;&#x4EFD;&#x63CF;&#x8FF0;"></a>&#x83B7;&#x53D6;&#x519C;&#x5386;&#x6708;&#x4EFD;&#x63CF;&#x8FF0;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取天数数组"><span class="nav-number">3.1.2.4.</span> <span class="nav-text"><a href="#&#x83B7;&#x53D6;&#x5929;&#x6570;&#x6570;&#x7EC4;" class="headerlink" title="&#x83B7;&#x53D6;&#x5929;&#x6570;&#x6570;&#x7EC4;"></a>&#x83B7;&#x53D6;&#x5929;&#x6570;&#x6570;&#x7EC4;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通过农历年月日获取公历NSDate"><span class="nav-number">3.1.2.5.</span> <span class="nav-text"><a href="#&#x901A;&#x8FC7;&#x519C;&#x5386;&#x5E74;&#x6708;&#x65E5;&#x83B7;&#x53D6;&#x516C;&#x5386;NSDate" class="headerlink" title="&#x901A;&#x8FC7;&#x519C;&#x5386;&#x5E74;&#x6708;&#x65E5;&#x83B7;&#x53D6;&#x516C;&#x5386;NSDate"></a>&#x901A;&#x8FC7;&#x519C;&#x5386;&#x5E74;&#x6708;&#x65E5;&#x83B7;&#x53D6;&#x516C;&#x5386;NSDate</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSDate-Calculation"><span class="nav-number">3.2.</span> <span class="nav-text"><a href="#NSDate-Calculation" class="headerlink" title="NSDate+Calculation"></a>NSDate+Calculation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一周后"><span class="nav-number">3.2.0.1.</span> <span class="nav-text"><a href="#&#x4E00;&#x5468;&#x540E;" class="headerlink" title="&#x4E00;&#x5468;&#x540E;"></a>&#x4E00;&#x5468;&#x540E;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#一个月后"><span class="nav-number">3.2.0.2.</span> <span class="nav-text"><a href="#&#x4E00;&#x4E2A;&#x6708;&#x540E;" class="headerlink" title="&#x4E00;&#x4E2A;&#x6708;&#x540E;"></a>&#x4E00;&#x4E2A;&#x6708;&#x540E;</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#公历计算两个日期间的差值"><span class="nav-number">3.2.1.</span> <span class="nav-text"><a href="#&#x516C;&#x5386;&#x8BA1;&#x7B97;&#x4E24;&#x4E2A;&#x65E5;&#x671F;&#x95F4;&#x7684;&#x5DEE;&#x503C;" class="headerlink" title="&#x516C;&#x5386;&#x8BA1;&#x7B97;&#x4E24;&#x4E2A;&#x65E5;&#x671F;&#x95F4;&#x7684;&#x5DEE;&#x503C;"></a>&#x516C;&#x5386;&#x8BA1;&#x7B97;&#x4E24;&#x4E2A;&#x65E5;&#x671F;&#x95F4;&#x7684;&#x5DEE;&#x503C;</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">秋刀鱼片</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("j51XonMEHXS2yNdh5yRcufkk-gzGzoHsz", "2tv2P0xhBcGfmlfXy4wMTjOy");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
