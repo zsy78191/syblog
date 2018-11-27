@@ -86,7 +86,7 @@
     root: '/',
     scheme: 'Pisces',
     version: '6.5.0',
-    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: false,
     fastclick: false,
     lazyload: false,
@@ -232,6 +232,8 @@
     
 
     
+      
+    
 
     <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
 
@@ -248,6 +250,8 @@
       
     
 
+    
+      
     
 
     <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
@@ -266,8 +270,10 @@
     
 
     
+      
+    
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">1</span></a>
 
   </li>
 
@@ -338,10 +344,10 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">说在前面的
+          <h2 class="post-title" itemprop="name headline">说在前面的
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -424,7 +430,7 @@
       
 
       
-        <h2 id="从面相对象说起"><a href="#从面相对象说起" class="headerlink" title="从面相对象说起"></a>从面相对象说起</h2><p><code>面向对象的程序设计</code>（Object-Oriented Programming，简记为OOP）这个概念大家都有所耳闻，目前（2017.12）,在<a href="https://www.tiobe.com/tiobe-index/" target="_blank" rel="noopener">Tiobe</a>世界语言排行榜上排前十的语言中，C语言和Assembly language(汇编)外的八种语言均原生支持<code>面向对象的程序设计</code>。</p>
+        <h2 id="从面相对象说起"><a href="#从面相对象说起" class="headerlink" title="从面相对象说起"></a>从面相对象说起</h2><p><code>面向对象的程序设计</code>（Object-Oriented Programming，简记为OOP）这个概念大家都有所耳闻，目前（2017.12）,在<span class="exturl" data-url="aHR0cHM6Ly93d3cudGlvYmUuY29tL3Rpb2JlLWluZGV4Lw==" title="https://www.tiobe.com/tiobe-index/">Tiobe<i class="fa fa-external-link"></i></span>世界语言排行榜上排前十的语言中，C语言和Assembly language(汇编)外的八种语言均原生支持<code>面向对象的程序设计</code>。</p>
 <a id="more"></a>
 <p>怎么判断一种编程语言是否支持OOP呢？看看这门语言是否支持类（class）、对象（object）、封装（encapsulation）、继承（inheritance）等功能和特性，支持这些就可以进行面向对象编程。拿Objective-C（OC）来说，类就是<code>Class</code>，对象就是<code>instance</code>，万物的基类是<code>NSObject</code>，这些东西在C语言里并不存在，是OC使用C语言的结构体（struct）抽象出来的产物。</p>
 <p>我们从Objective-C的名字上也能看出一些端倪，直译过来是<code>对象化的C语言</code>，当然不仅是OC，排行榜前十中的C++同样是C语言的一个超集；C#和Java同样属于类C语言，把面向对象做的更加彻底；PHP虽然是脚本语言，其解释器是使用C语言写的；而我们常说的Python，其全称则是CPython，也是用C语言实现的解释器，当然Python解释器也有Java和C#实现的版本。</p>
@@ -454,7 +460,7 @@
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//通过@符号直接把普通变量转换为数字对象</span></div><div class="line"><span class="built_in">NSNumber</span> *myIntegerNumber = @<span class="number">8</span>;</div><div class="line"><span class="comment">//转回来</span></div><div class="line"><span class="built_in">NSInteger</span> customNumber = [myIntegerNumber integerValue];</div></pre></td></tr></table></figure>
 <p>相比之下，Smarttalk和Ruby做的更彻底，更好用，下面是用Smarttalk重复输出十次<code>Hello world</code>的代码，给数字10发<code>timesRepeat</code>消息，重复消息参数中的闭包：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">10 timesRepeat: [Transcript show: &apos;Hello world&apos;]</div></pre></td></tr></table></figure>
-<p>为什么整数类要设计这么方法呢？因为Smarttalk中并没有循环语法，甚至其他语言常见的条件语句if/else在Smarttalk中都是不存在的，而都是使用OOP的理念实现，有兴趣了解更多关于Smarttalk的内容，请来<a href="https://kb.cnblogs.com/page/115465/" target="_blank" rel="noopener">这里</a>。</p>
+<p>为什么整数类要设计这么方法呢？因为Smarttalk中并没有循环语法，甚至其他语言常见的条件语句if/else在Smarttalk中都是不存在的，而都是使用OOP的理念实现，有兴趣了解更多关于Smarttalk的内容，请来<span class="exturl" data-url="aHR0cHM6Ly9rYi5jbmJsb2dzLmNvbS9wYWdlLzExNTQ2NS8=" title="https://kb.cnblogs.com/page/115465/">这里<i class="fa fa-external-link"></i></span>。</p>
 <h2 id="给对象发消息是更符合人类思维模式的设计"><a href="#给对象发消息是更符合人类思维模式的设计" class="headerlink" title="给对象发消息是更符合人类思维模式的设计"></a>给对象发消息是更符合人类思维模式的设计</h2><p>这里我们从继承Smarttalk理念的Ruby说起，虽然其使用点语法替代了冒号，但仍能看出Ruby中的数字类型，就是数字对象。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//将数字对象102转换成字符串对象</div><div class="line">102.to_s</div></pre></td></tr></table></figure>
 <p>用Smarttalk实现则是</p>
@@ -542,6 +548,8 @@
 
   <aside id="sidebar" class="sidebar">
     
+      <div id="sidebar-dimmer"></div>
+    
     <div class="sidebar-inner">
 
       
@@ -608,7 +616,7 @@
                   
                     
                   
-                  <a href="https://github.com/zsy78191" title="GitHub &rarr; https://github.com/zsy78191" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3pzeTc4MTkx" title="GitHub &rarr; https://github.com/zsy78191"><i class="fa fa-fw fa-globe"></i>GitHub</span>
                 </span>
               
                 <span class="links-of-author-item">
@@ -619,7 +627,7 @@
                   
                     
                   
-                  <a href="https://weibo.com/2008320863/profile?topnav=1&wvr=6" title="Weibo &rarr; https://weibo.com/2008320863/profile?topnav=1&wvr=6" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>Weibo</a>
+                  <span class="exturl" data-url="aHR0cHM6Ly93ZWliby5jb20vMjAwODMyMDg2My9wcm9maWxlP3RvcG5hdj0xJnd2cj02" title="Weibo &rarr; https://weibo.com/2008320863/profile?topnav=1&wvr=6"><i class="fa fa-fw fa-globe"></i>Weibo</span>
                 </span>
               
             </div>
@@ -657,6 +665,13 @@
       
 
       
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
 
     </div>
   </aside>
@@ -668,7 +683,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">苏ICP备18064390号 </a>&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">  <span class="exturl" data-url="aHR0cDovL3d3dy5taWl0YmVpYW4uZ292LmNu">苏ICP备18064390号 </span>&copy; <span itemprop="copyrightYear">2018</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
@@ -700,11 +715,6 @@
       </div>
     </footer>
 
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
     
 
     
@@ -911,6 +921,8 @@
   
 
   
+  <script type="text/javascript" src="/js/src/exturl.js?v=6.5.0"></script>
+
 
   
   
@@ -924,6 +936,75 @@
 
 
   
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
 
   
 
