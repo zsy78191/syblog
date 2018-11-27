@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.5.0',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":"ture","transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前篇说到我们通过ObjC的Category特性给日常工作增加便捷的实现，这一篇则要从语言设计角度，跟大家分享一些思考。 不要忽视interfaceObjC的@interface设计，跟Java和C#真的很像，但又略有不同，相比之下Java和C#则像是一个模子刻出来的。ObjC的特点十分明显，首先是一般不用写@private和@public来区分私有变量，大部分ObjC开发者甚至都不知道还有这两个关">
+<meta property="og:type" content="article">
+<meta property="og:title" content="二、interface和setter，getter">
+<meta property="og:url" content="https://www.zhangzichuan.cn/2017/12/09/0-2/index.html">
+<meta property="og:site_name" content="张超的个人博客">
+<meta property="og:description" content="前篇说到我们通过ObjC的Category特性给日常工作增加便捷的实现，这一篇则要从语言设计角度，跟大家分享一些思考。 不要忽视interfaceObjC的@interface设计，跟Java和C#真的很像，但又略有不同，相比之下Java和C#则像是一个模子刻出来的。ObjC的特点十分明显，首先是一般不用写@private和@public来区分私有变量，大部分ObjC开发者甚至都不知道还有这两个关">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-12-14T03:12:34.625Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="二、interface和setter，getter">
+<meta name="twitter:description" content="前篇说到我们通过ObjC的Category特性给日常工作增加便捷的实现，这一篇则要从语言设计角度，跟大家分享一些思考。 不要忽视interfaceObjC的@interface设计，跟Java和C#真的很像，但又略有不同，相比之下Java和C#则像是一个模子刻出来的。ObjC的特点十分明显，首先是一般不用写@private和@public来区分私有变量，大部分ObjC开发者甚至都不知道还有这两个关">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="张超的个人博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://www.zhangzichuan.cn/2017/12/09/0-2/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>二、interface和setter，getter | 张超的个人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">张超的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">6</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.zhangzichuan.cn/2017/12/09/0-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="秋刀鱼片">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://ww2.sinaimg.cn/mw690/77b48b5fjw8etkxjpachmj205k05kmx2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="张超的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">二、interface和setter，getter
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-09 16:00:00" itemprop="dateCreated datePublished" datetime="2017-12-09T16:00:00+08:00">2017-12-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2017-12-14 11:12:34" itemprop="dateModified" datetime="2017-12-14T11:12:34+08:00">2017-12-14</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/09/0-2/" class="leancloud_visitors" data-flag-title="二、interface和setter，getter">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><span class="exturl" data-url="aHR0cDovL2Jsb2cub3J6ZXIuY2x1Yi8yMDE3LzEyLzA3LzAtMS8=" title="http://blog.orzer.club/2017/12/07/0-1/">前篇<i class="fa fa-external-link"></i></span>说到我们通过ObjC的Category特性给日常工作增加便捷的实现，这一篇则要从语言设计角度，跟大家分享一些思考。</p>
+<h2 id="不要忽视interface"><a href="#不要忽视interface" class="headerlink" title="不要忽视interface"></a>不要忽视interface</h2><p>ObjC的@interface设计，跟Java和C#真的很像，但又略有不同，相比之下Java和C#则像是一个模子刻出来的。ObjC的特点十分明显，首先是一般不用写<code>@private</code>和<code>@public</code>来区分私有变量，大部分ObjC开发者甚至都不知道还有这两个关键字，其实Cocoa源代码中也基本没有使用过这种设计，即使ObjC是支持的。</p>
+<a id="more"></a>
+<p>在@interface 中使用 @private和@public</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSObject</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">@private</span></div><div class="line">    <span class="built_in">NSString</span>* _name;</div><div class="line">    <span class="keyword">@public</span></div><div class="line">    <span class="built_in">NSNumber</span>* _age;</div><div class="line">    <span class="keyword">int</span> _height;</div><div class="line">&#125;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>如上代码中，<code>Student</code>有一个私有变量<code>_name</code>，和两个共有变量<code>_age</code>、<code>_height</code>，但在<code>@interface</code>中声明变量，一定不是Cocoa设计者的初衷，这里有两个方面的考虑。</p>
+<p>其一，把内部变量直接暴露在外，会降低整个框架的稳定性，因为增加不同模块之间的耦合，降低了每个类的内聚性。<br>其二，内部变量的变量名，很容易跟局部变量变量名产生冲突。上例中我给每一个变量名前加了下划线，就是为了防止这个问题发生。</p>
+<p>所以纵观Cocoa框架的头文件设计，基本没有这样的代码，因为设计者提供了更好的实现方式，就是大家用的更多的<code>@property</code>关键字。</p>
+<p>如果用@property声明上面的类，大家都很熟悉</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSString</span>* name;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSNumber</span>* age;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) <span class="built_in">NSInteger</span> height;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>@property这个设计真的很有意思，首先我们不再区分私有公有属性，因为只要写在<code>.h</code>里面的@property，我们都默认是共有的，私有的@property可以写在<code>.m</code>文件里。</p>
+<p>其次，配合写在@implementation里面的@synthesize关键字，可以自动生成setter和getter方法，而现在@synthesize关键字都可以省略，除了个别情况有修改内部变量名称的需求。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Student</span></span></div><div class="line"><span class="keyword">@synthesize</span> name = _name;</div><div class="line"><span class="keyword">@synthesize</span> age = __age;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>上面的@synthesize，第一个是可以省略的，在不写的情况下，编译预处理会自动给添加@synthesize代码，所以即使没有合成（synthesize）height属性，我们依然实现了它的setter和getter方法</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//这两个方法可以重写</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)setHeight:(<span class="built_in">NSInteger</span>)height</div><div class="line">&#123;</div><div class="line">    _height = height;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">NSInteger</span>)height</div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> _height;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在setter和getter方法均重写的情况下，@synthesize需要手动添加。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@synthesize</span> height = _height;</div></pre></td></tr></table></figure>
+<p>ObjC的property，其实只是getter、setter方法的便捷包装工具，对于一个property，可以只有getter没有setter（readonly），可以没有内部变量，甚至property的各种修饰声明，内部变量同样支持：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXClass</span>()</span></div><div class="line">&#123;</div><div class="line">   __<span class="keyword">strong</span> <span class="built_in">NSMutableArray</span>* _students;</div><div class="line">&#125;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readwrite</span>) <span class="built_in">NSMutableArray</span>* students;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>当然<code>nonatomic</code>和<code>readwrite</code>是针对setter和getter方法的修饰，内部变量没有。</p>
+<blockquote>
+<p>nonatomic关键字和atomic关键字，决定编译器会不会自动给setter和getter方法加原子锁，atomic模式能保证多线程访问安全，但是运行效率要低，所以一般不涉及跨线程并发操作的属性，我们都用nonatomic修饰。</p>
+</blockquote>
+<h2 id="为什么要使用-setter-和-getter"><a href="#为什么要使用-setter-和-getter" class="headerlink" title="为什么要使用 setter 和 getter"></a>为什么要使用 setter 和 getter</h2><p><code>setter</code>和<code>getter</code>的设计的确值得琢磨，我们主要从以下几点分析：</p>
+<h3 id="setter-和-getter-包装了内部变量，整个类对外可以只暴露接口，增强类的内聚性。"><a href="#setter-和-getter-包装了内部变量，整个类对外可以只暴露接口，增强类的内聚性。" class="headerlink" title="setter 和 getter 包装了内部变量，整个类对外可以只暴露接口，增强类的内聚性。"></a>setter 和 getter 包装了内部变量，整个类对外可以只暴露接口，增强类的内聚性。</h3><p>例如上例中的内部变量<code>_name</code>，外部类是无法操作的，只能通过set和get接口来发消息：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Student* s = [[Student alloc] init];</div><div class="line"></div><div class="line">[s setName:<span class="string">@"Tom"</span>];</div><div class="line">[s name];</div></pre></td></tr></table></figure>
+<h3 id="通过实现-getter方法，可以避开初始化变量的时机问题"><a href="#通过实现-getter方法，可以避开初始化变量的时机问题" class="headerlink" title="通过实现 getter方法，可以避开初始化变量的时机问题"></a>通过实现 getter方法，可以避开初始化变量的时机问题</h3><p>这也是很实用的一个点，因为ObjC的消息设计机制，导致ObjC很难在初始化（init）方法中传入过多参数（题外话，我给ObjC扩展过依赖注入，详见<span class="exturl" data-url="aHR0cHM6Ly9zZWdtZW50ZmF1bHQuY29tL2EvMTE5MDAwMDAwNDY1OTUxNA==" title="https://segmentfault.com/a/1190000004659514">iOS实现依赖注入<i class="fa fa-external-link"></i></span>）。因此新实例的默认属性，放在什么位置实现合适，是大家一定遇到过的问题。</p>
+<p>例如最常见的<code>UIViewController</code>，代码初始化走<code>init</code>方法，而通过storyboard实力化则走<code>initWithCoder</code>方法，一些容器属性，通过getter方法初始化，则可避免第一次调用尚未初始化造成的问题。</p>
+<p>早期的Cocoa在如果给<code>nil</code>发消息，是会引起异常的，现在的版本给没有alloc的对象发消息不再抛异常，以至于某些时候属性没有初始化造成的问题变得更隐蔽，然而重写getter方法可以有效避免这个问题，例如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//班级类</span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXClass</span> : <span class="title">NSObject</span></span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span>* students; <span class="comment">//学生</span></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span></span></div><div class="line"></div><div class="line"><span class="comment">//实现getter方法，在内部变量_students没初始化的情况下将其初始化</span></div><div class="line">- (<span class="built_in">NSMutableArray</span> *)students</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> (!_students) &#123;</div><div class="line">        _students = [<span class="built_in">NSMutableArray</span> array];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> _students;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>如此一来，无论在任何时候，第一次发送<code>[self students]</code>消息的时候，内部变量<code>_students</code>都会初始化。</p>
+<blockquote>
+<p>在这里要另外注明一点，在类的内部，不要在setter和getter方法外，直接使用内部变量，遵守这一条会收益很多。</p>
+</blockquote>
+<h3 id="setter-和-getter-可以单独使用，也可以脱离内部变量使用"><a href="#setter-和-getter-可以单独使用，也可以脱离内部变量使用" class="headerlink" title="setter 和 getter 可以单独使用，也可以脱离内部变量使用"></a>setter 和 getter 可以单独使用，也可以脱离内部变量使用</h3><p>这里要说的就是@property的灵活性了，大家知道@property拥有一系列的修饰词，除了常用的<code>nonatomic（非原子化，线程安全）</code>，<code>strong（强引用类型）</code>，<code>weak（弱引用类型）</code>，<code>assign（赋值，用于非对象属性）</code>以外，还有<code>readonly（只读）</code>和<code>readwrite（可读写）</code>两个影响setter和getter方法的属性，<code>readonly</code>修饰的属性，只有getter方法而没有setter方法。</p>
+<p><code>readwrite</code>则是一个看起来可有可无的修饰词，因为默认就是可读写。然而它其实有个专门设计的用法，就是在.h中的interface中被<code>readonly</code>修饰的属性，可以在这个类的其他类别（category）或者匿名类别中重新声明这个属性时，修改其读写限制，例如</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//班级类</span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXClass</span> : <span class="title">NSObject</span></span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) <span class="built_in">NSMutableArray</span>* students; <span class="comment">//学生</span></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//匿名类别</span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXClass</span>()</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readwrite</span>) <span class="built_in">NSMutableArray</span>* students;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>这样一来，因为匿名类别一般写在.m文件里（基本没见过写在.h文件里的），所以外部是不能调用<code>students</code>属性的setter方法，而<code>XXClass</code>类内部则可以使用。</p>
+<p>还有一种常见情况是用setter和getter来模拟属性（@property），例如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//班级类</span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXClass</span> : <span class="title">NSObject</span></span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) <span class="built_in">NSMutableArray</span>* students; <span class="comment">//学生</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>, <span class="keyword">readonly</span>) <span class="built_in">NSUInteger</span> studentsCount; <span class="comment">//学生数量</span></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">NSUInteger</span>)studentsCount</div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>.students.count;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的<code>studentsCount</code>是没有内部变量的，通过getter方法伪造成属性接口。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>这一篇是ObjC的接口设计模式的一部分，写的比较详细是帮助新手入门，给有经验的朋友带来一些思考，并引出接下来的内容。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/07/0-1/" rel="next" title="一、认识ObjC，改造Cocoa">
+                <i class="fa fa-chevron-left"></i> 一、认识ObjC，改造Cocoa
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/13/0-3/" rel="prev" title="三、是消息？还是属性？">
+                三、是消息？还是属性？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://ww2.sinaimg.cn/mw690/77b48b5fjw8etkxjpachmj205k05kmx2.jpg"
+                alt="秋刀鱼片" />
+            
+              <p class="site-author-name" itemprop="name">秋刀鱼片</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3pzeTc4MTkx" title="GitHub &rarr; https://github.com/zsy78191"><i class="fa fa-fw fa-globe"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly93ZWliby5jb20vMjAwODMyMDg2My9wcm9maWxlP3RvcG5hdj0xJnd2cj02" title="Weibo &rarr; https://weibo.com/2008320863/profile?topnav=1&wvr=6"><i class="fa fa-fw fa-globe"></i>Weibo</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#不要忽视interface"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x4E0D;&#x8981;&#x5FFD;&#x89C6;interface" class="headerlink" title="&#x4E0D;&#x8981;&#x5FFD;&#x89C6;interface"></a>&#x4E0D;&#x8981;&#x5FFD;&#x89C6;interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要使用-setter-和-getter"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x4F7F;&#x7528;-setter-&#x548C;-getter" class="headerlink" title="&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x4F7F;&#x7528; setter &#x548C; getter"></a>&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x4F7F;&#x7528; setter &#x548C; getter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#setter-和-getter-包装了内部变量，整个类对外可以只暴露接口，增强类的内聚性。"><span class="nav-number">2.1.</span> <span class="nav-text"><a href="#setter-&#x548C;-getter-&#x5305;&#x88C5;&#x4E86;&#x5185;&#x90E8;&#x53D8;&#x91CF;&#xFF0C;&#x6574;&#x4E2A;&#x7C7B;&#x5BF9;&#x5916;&#x53EF;&#x4EE5;&#x53EA;&#x66B4;&#x9732;&#x63A5;&#x53E3;&#xFF0C;&#x589E;&#x5F3A;&#x7C7B;&#x7684;&#x5185;&#x805A;&#x6027;&#x3002;" class="headerlink" title="setter &#x548C; getter &#x5305;&#x88C5;&#x4E86;&#x5185;&#x90E8;&#x53D8;&#x91CF;&#xFF0C;&#x6574;&#x4E2A;&#x7C7B;&#x5BF9;&#x5916;&#x53EF;&#x4EE5;&#x53EA;&#x66B4;&#x9732;&#x63A5;&#x53E3;&#xFF0C;&#x589E;&#x5F3A;&#x7C7B;&#x7684;&#x5185;&#x805A;&#x6027;&#x3002;"></a>setter &#x548C; getter &#x5305;&#x88C5;&#x4E86;&#x5185;&#x90E8;&#x53D8;&#x91CF;&#xFF0C;&#x6574;&#x4E2A;&#x7C7B;&#x5BF9;&#x5916;&#x53EF;&#x4EE5;&#x53EA;&#x66B4;&#x9732;&#x63A5;&#x53E3;&#xFF0C;&#x589E;&#x5F3A;&#x7C7B;&#x7684;&#x5185;&#x805A;&#x6027;&#x3002;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过实现-getter方法，可以避开初始化变量的时机问题"><span class="nav-number">2.2.</span> <span class="nav-text"><a href="#&#x901A;&#x8FC7;&#x5B9E;&#x73B0;-getter&#x65B9;&#x6CD5;&#xFF0C;&#x53EF;&#x4EE5;&#x907F;&#x5F00;&#x521D;&#x59CB;&#x5316;&#x53D8;&#x91CF;&#x7684;&#x65F6;&#x673A;&#x95EE;&#x9898;" class="headerlink" title="&#x901A;&#x8FC7;&#x5B9E;&#x73B0; getter&#x65B9;&#x6CD5;&#xFF0C;&#x53EF;&#x4EE5;&#x907F;&#x5F00;&#x521D;&#x59CB;&#x5316;&#x53D8;&#x91CF;&#x7684;&#x65F6;&#x673A;&#x95EE;&#x9898;"></a>&#x901A;&#x8FC7;&#x5B9E;&#x73B0; getter&#x65B9;&#x6CD5;&#xFF0C;&#x53EF;&#x4EE5;&#x907F;&#x5F00;&#x521D;&#x59CB;&#x5316;&#x53D8;&#x91CF;&#x7684;&#x65F6;&#x673A;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setter-和-getter-可以单独使用，也可以脱离内部变量使用"><span class="nav-number">2.3.</span> <span class="nav-text"><a href="#setter-&#x548C;-getter-&#x53EF;&#x4EE5;&#x5355;&#x72EC;&#x4F7F;&#x7528;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x8131;&#x79BB;&#x5185;&#x90E8;&#x53D8;&#x91CF;&#x4F7F;&#x7528;" class="headerlink" title="setter &#x548C; getter &#x53EF;&#x4EE5;&#x5355;&#x72EC;&#x4F7F;&#x7528;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x8131;&#x79BB;&#x5185;&#x90E8;&#x53D8;&#x91CF;&#x4F7F;&#x7528;"></a>setter &#x548C; getter &#x53EF;&#x4EE5;&#x5355;&#x72EC;&#x4F7F;&#x7528;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x8131;&#x79BB;&#x5185;&#x90E8;&#x53D8;&#x91CF;&#x4F7F;&#x7528;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x5C0F;&#x7ED3;" class="headerlink" title="&#x5C0F;&#x7ED3;"></a>&#x5C0F;&#x7ED3;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <span class="exturl" data-url="aHR0cDovL3d3dy5taWl0YmVpYW4uZ292LmNu">苏ICP备18064390号 </span>&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">秋刀鱼片</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function ({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
+            
+            Counter('put', `/classes/Counter/${counter.objectId}`, JSON.stringify({ time: { "__op":"Increment", "amount":1 } }))
+            
+            .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+            })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1}))
+                .done(function () {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function () {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+      .fail(function ({ responseJSON }) {
+        console.log('LeanCloud Counter Error:' + responseJSON.code + " " + responseJSON.error);
+      });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + "j51XonMEHXS2yNdh5yRcufkk-gzGzoHsz")
+        .done(function ({ api_server }) {
+          var Counter = function (method, url, data) {
+            return $.ajax({
+              method: method,
+              url: `https://${api_server}/1.1${url}`,
+              headers: {
+                'X-LC-Id': "j51XonMEHXS2yNdh5yRcufkk-gzGzoHsz",
+                'X-LC-Key': "2tv2P0xhBcGfmlfXy4wMTjOy",
+                'Content-Type': 'application/json',
+              },
+              data: data,
+            });
+          };
+          
+          addCount(Counter);
+          
+        })
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/exturl.js?v=6.5.0"></script>
+
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
